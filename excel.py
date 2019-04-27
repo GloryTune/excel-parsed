@@ -4,15 +4,20 @@ from xlutils.copy import copy
 from tkinter.filedialog import askdirectory
 from tkinter import *
 import os
+import tkinter as tk
 root = Tk()
-
+root.geometry('200x80+450+200')
+root.title('天韵')
 def xuanze():
-    global a
+    global a,m
     a = askdirectory()
+    m = str(a)
+    label_1 = tk.Label(root, text=m)
+    label_1.place(x=80, y=0, width=120, height=25)
 def jisuan():
     # 机动车Vlookup
     df1 = pd.read_excel(a+"/data.xls", encoding = 'utf-8')
-    df2 = pd.read_excel(a+"/机动车.xlsx", encoding = 'utf-8')
+    df2 = pd.read_excel(a+"/机动车.xls", encoding = 'utf-8')
     c=df1.merge(df2[['纳税人名称','机动']],how='left',on='纳税人名称')
     c.to_excel(a+'/test1.xls', encoding = 'utf-8')
     #机动车转移数据
@@ -22,7 +27,7 @@ def jisuan():
     list_values = []
     for x in range(1,nrows):
         list_values.append(table.cell_value(x,13))
-    print((list_values))
+
     rb = xlrd.open_workbook(a+'/data.xls',formatting_info=True)
     wb = copy(rb)
     ws = wb.get_sheet(0)
@@ -41,7 +46,7 @@ def jisuan():
     list_values1 = []
     for x in range(1, nrows1):
         list_values1.append(table1.cell_value(x, 13))
-    print((list_values1))
+
     rb1 = xlrd.open_workbook(a + '/data.xls', formatting_info=True)
     wb1 = copy(rb1)
     ws1 = wb1.get_sheet(0)
@@ -50,7 +55,7 @@ def jisuan():
     wb1.save(a + '/data.xls')
     #认证
     bf1 = pd.read_excel(a + "/data.xls", encoding='utf-8')
-    bf2 = pd.read_excel(a + "/认证.xlsx", encoding='utf-8')
+    bf2 = pd.read_excel(a + "/认证.xls", encoding='utf-8')
     e = bf1.merge(bf2[['纳税人名称', '认证']], how='left', on='纳税人名称')
     e.to_excel(a + '/test3.xls', encoding='utf-8')
     # 认证转移数据
@@ -60,7 +65,7 @@ def jisuan():
     list_values2 = []
     for x in range(1, nrows2):
         list_values2.append(table2.cell_value(x, 13))
-    print((list_values2))
+
     rb2 = xlrd.open_workbook(a + '/data.xls', formatting_info=True)
     wb2 = copy(rb2)
     ws2 = wb2.get_sheet(0)
@@ -79,7 +84,7 @@ def jisuan():
     list_values3 = []
     for x in range(1, nrows3):
         list_values3.append(table3.cell_value(x, 13))
-    print((list_values3))
+
     rb3 = xlrd.open_workbook(a + '/data.xls', formatting_info=True)
     wb3 = copy(rb3)
     ws3 = wb3.get_sheet(0)
@@ -140,7 +145,7 @@ def jisuan():
     list_values7 = []
     for x in range(1, nrows7):
         list_values7.append(table7.cell_value(x, 6))
-    # print((list_values3))
+
     rb7 = xlrd.open_workbook(a + '/data.xls', formatting_info=True)
     wb7 = copy(rb7)
     ws7 = wb7.get_sheet(0)
@@ -150,25 +155,46 @@ def jisuan():
     vf = pd.read_excel(a+"/data.xls", encoding = 'utf-8')
     vf.eval('sum = 报税销项税额 + 免抵退 -认证进项税额-认证-机动车-海关-上期留抵',inplace=True)
     vf.to_excel(a + '/test6.xls', encoding='utf-8')
-    #转移和数据
-    data8 = xlrd.open_workbook(a + '/test6.xls')
-    table8 = data8.sheets()[0]
-    nrows8 = table8.nrows
-    list_values8 = []
-    for x in range(1, nrows8):
-        list_values8.append(table8.cell_value(x, 13))
-    # print((list_values3))
+    #总数中负数转为零并将数据转移到总表
+    data9 = xlrd.open_workbook(a + '/test6.xls')
+    table9 = data9.sheets()[0]
+    nrows9 = table9.nrows
+    list_values9 = []
+    for x in range(1, nrows9):
+        list_values9.append(table9.cell_value(x, 13))#list_values9现在存储着和那一列 是列表形式
+    for w in list_values9:
+        if w < 0:
+            t = list_values9.index(w)
+            list_values9[t]=0
+
     rb8 = xlrd.open_workbook(a + '/data.xls', formatting_info=True)
     wb8 = copy(rb8)
     ws8 = wb8.get_sheet(0)
-    for x in range(len(list_values8)):
-        ws8.write(x + 1, 9, list_values8[x])
+    for x in range(len(list_values9)):
+        ws8.write(x + 1, 9, list_values9[x])
     wb8.save(a + '/data.xls')
+    #
     for name in ['test1.xls','test2.xls','test3.xls','test4.xls','test5.xls','test6.xls']:
         del_file = os.path.join(a, name)
         os.remove(del_file)
+    m =str('转换完成')
+    label_1 = tk.Label(root, text=m)
+    label_1.place(x=80, y=25, width=100, height=25)
+def caidan():
+    mm =e_user.get()
+    if mm == '1015':
+        lable = tk.Label(root,text='我爱你')
+        lable.place(x=80, y=25, width=120, height=25)
+    else:
+        lable2 = tk.Label(root, text='请输入正确的四位数')
+        lable2.place(x=80, y=25, width=120, height=25)
 
-
-Button(root, text = "路径选择", command = xuanze).pack()
-Button(root, text = "ji", command = jisuan).pack()
+btn=Button(root,text="选择文件夹",command=xuanze)
+btn.place(x=0,y=0,width=80, height=25)
+btn1=Button(root,text="一键转换",command=jisuan)
+btn1.place(x=0,y=25,width=80, height=25)
+btn2=Button(root,text="韵",command=caidan)
+btn2.place(x=170,y=50,width=30,height=30)
+e_user =Entry(root)
+e_user.place(x=0,y=50,width=38, height=25)
 root.mainloop()
