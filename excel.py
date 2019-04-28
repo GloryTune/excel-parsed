@@ -19,7 +19,7 @@ def jisuan():
         # 机动车Vlookup
         df1 = pd.read_excel(a+"/data.xls", encoding = 'utf-8')
         df2 = pd.read_excel(a+"/机动车.xls", encoding = 'utf-8')
-        c=df1.merge(df2[['纳税人名称','机动']],how='left',on='纳税人名称')
+        c=df1.merge(df2[['纳税人名称','机动车']],how='left',on='纳税人名称')
         c.to_excel(a+'/test1.xls', encoding = 'utf-8')
         #机动车转移数据
         data = xlrd.open_workbook(a+'/test1.xls')
